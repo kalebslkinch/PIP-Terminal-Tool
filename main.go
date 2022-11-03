@@ -19,6 +19,9 @@ func getHomepageData() {
 	handler("https://podcast-index-platform.vercel.app/api/cachedAPI/homePage")
 }
 
+func getTrendingPageData() {
+	handler("https://podcast-index-platform.vercel.app/api/cachedAPI/trendingPage")
+}
 func handler(url string) {
 
 req, err := http.NewRequest("GET",  url, nil)
@@ -41,28 +44,35 @@ req, err := http.NewRequest("GET",  url, nil)
 
 	fmt.Println("Press any key to return to menu")
 	fmt.Scanln()
-	main()
+	showAPIMenu(tview.NewApplication())
 	
 	
 }
-
-
-func menu() tview.Primitive {
+func mainmenu() tview.Primitive {
 	list := tview.NewList().
-		AddItem("Get Popular Podcasts", "", '1', nil).
-		AddItem("Get Trending Podcasts", "", '2', nil).
-		AddItem("Quit", "", 'q', func() {
-			tview.NewApplication().Stop()
-		})
+		AddItem("Check API Endpoints", "", '1', nil).
+		AddItem("Menu Option 2", "", '2', nil).
+		AddItem("Menu Option 3", "", '3', nil).
+		AddItem("Quit", "", '4', nil)
+
+	return list
+	
+}
+
+func apimenu() tview.Primitive {
+	list := tview.NewList().
+		AddItem("View Popular Podcasts Data", "", '1', nil).
+		AddItem("View Home Page Cached Data", "", '2', nil).
+		AddItem("View Trending Page Cached Data", "", '3', nil).
+		AddItem("Return to Menu", "", '4', nil)
 	return list
 	
 }
 
 
-func main() {
+func showAPIMenu(terminal *tview.Application) {
 
-	terminal := tview.NewApplication()
-	terminal.SetRoot(menu(), true)
+	terminal.SetRoot(apimenu(), true)
 	terminal.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
 		if event.Key() == tcell.KeyEscape {
 			terminal.Stop()
@@ -76,6 +86,47 @@ func main() {
 			if event.Rune() == '2' {
 			terminal.Stop()
 			getHomepageData()
+
+			}
+			if event.Rune() == '3' {
+			terminal.Stop()
+			getTrendingPageData()
+
+			}
+			terminal.Stop()
+			if event.Rune() == '4'  {
+				terminal.Stop()
+				main()
+			}
+		}
+		
+
+		return event
+	})
+}
+func main() {
+
+	terminal := tview.NewApplication()
+
+	terminal.SetRoot(mainmenu(), true)
+	terminal.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
+		if event.Key() == tcell.KeyEscape {
+			terminal.Stop()
+		}
+		if event.Key() == tcell.KeyRune {
+			if event.Rune() == '1' {
+
+			showAPIMenu(terminal)
+
+		}
+			if event.Rune() == '2' {
+			terminal.Stop()
+			getHomepageData()
+
+			}
+			if event.Rune() == '3' {
+			terminal.Stop()
+			getTrendingPageData()
 
 			}
 			
